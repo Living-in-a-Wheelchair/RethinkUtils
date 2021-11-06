@@ -7,6 +7,7 @@ from pybloom import BloomFilter
 import re
 import pickle
 
+REINDEX = False
 MAIN_PATH = "C:\\Users\\arman\Documents\\ProjectRogerFaulknerRethink\\IPFS_Roger_Dropbox_Archive_Proprietary"
 
 def get_file_paths(verbose=False):
@@ -39,6 +40,7 @@ def process(paths, path_to_name, verbose=False):
         content = str(parsed["content"])
         if verbose:
             # TODO: Figure out what all those five-word files are called and blacklist them from get_file_paths().
+            # TODO: Only process certain files that Tika supports
             print("{} contains {} words".format(path_to_name[file_path], parsed["content"]))
         files[file_path] = content
     # I should add more processing steps like stemming and removing common words (a, the, etc). https://www.stavros.io/posts/bloom-filter-search-engine/
@@ -53,9 +55,18 @@ def create_filters(processed_file_texts):
             filters[name].add(word)
     return filters
 
+def search(filters, search_string):
+    search_terms = re.split("\W+", search_string)
+    return [name for name, filter in filters.items() if all(term in filter for term in search_terms)]
+
 if __name__ == "__main__":
-    file_paths, path_to_name = get_file_paths(verbose=True)
-    processed_file_texts = process(file_paths, path_to_name, verbose=True)
-    bloom_filters = create_filters(processed_file_texts)
-    with open("filters.pickle", "wb") as handle:
-        pickle.dump(bloom_filters, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    if REINDEX:
+        file_paths, path_to_name = get_file_paths(verbose=True)
+        processed_file_texts = process(file_paths, path_to_name, verbose=True)
+        bloom_filters = create_filters(processed_file_texts)
+        with open("filters.pickle", "wb") as handle:
+            pickle.dump(bloom_filters, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    else:
+        with open("filters.pickle", "rb") as handle:
+            filters = pickle.load(handle)
+        # print(search(filters, "coal gasification"))
