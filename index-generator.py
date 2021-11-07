@@ -9,6 +9,7 @@ import pickle
 
 REINDEX = False
 MAIN_PATH = "C:\\Users\\arman\Documents\\ProjectRogerFaulknerRethink\\IPFS_Roger_Dropbox_Archive_Proprietary"
+IPFS_FOLDER = "QmZG4ktRNuvptneiYDFDzjL3Ssd9FUS4BnJeEYQmhfXDqE"
 
 def get_file_paths(verbose=False):
     count = 0
