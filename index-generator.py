@@ -69,4 +69,4 @@ if __name__ == "__main__":
     else:
         with open("filters.pickle", "rb") as handle:
             filters = pickle.load(handle)
-        # print(search(filters, "coal gasification"))
+        # print(len(search(filters, "coal gasification")))
