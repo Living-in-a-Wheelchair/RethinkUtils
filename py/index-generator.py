@@ -6,10 +6,11 @@ import sqlite3
 from pybloom import BloomFilter
 import re
 import pickle
+import json
 
 REINDEX = False
 MAIN_PATH = "C:\\Users\\arman\Documents\\ProjectRogerFaulknerRethink\\IPFS_Roger_Dropbox_Archive_Proprietary"
-IPFS_FOLDER = "QmZG4ktRNuvptneiYDFDzjL3Ssd9FUS4BnJeEYQmhfXDqE"
+IPFS_FOLDER = "QmZG4ktRNuvptneiYDFDzjL3Ssd9FUS4BnJeEYQmhfXDqE" # with this, then we can call the ipfs files using ipfs get $IPFS_FOLDER/<usual filesystem path from the root directory>
 
 def get_file_paths(verbose=False):
     count = 0
@@ -45,7 +46,8 @@ def process(paths, path_to_name, verbose=False):
             print("{} contains {} words".format(path_to_name[file_path], parsed["content"]))
         files[file_path] = content
     # I should add more processing steps like stemming and removing common words (a, the, etc). https://www.stavros.io/posts/bloom-filter-search-engine/
-    processed_files = {name: set(re.split("\W+", contents.lower())) for name, contents in files.items()}
+    # Change from list to set
+    processed_files = {name: list(re.split("\W+", contents.lower())) for name, contents in files.items()}
     return processed_files
 
 def create_filters(processed_file_texts):
@@ -71,3 +73,8 @@ if __name__ == "__main__":
         with open("filters.pickle", "rb") as handle:
             filters = pickle.load(handle)
         # print(len(search(filters, "coal gasification")))
+        file_paths, path_to_name = get_file_paths(verbose=True)
+        processed_file_texts = process(file_paths, path_to_name, verbose=True)
+        procfile_dumps = json.dumps(processed_file_texts)
+        print(procfile_dumps)
+
