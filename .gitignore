@@ -1,2 +1,4 @@
 js/node_modules
 node_modules
+tika-server.jar
+js/tika-server.jar
